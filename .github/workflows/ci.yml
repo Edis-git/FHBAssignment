@@ -31,6 +31,17 @@ jobs:
       if: github.event_name == 'pull_request'
       run: npm run lint
 
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+          args: >
+            -Dsonar.organization=edis-git
+            -Dsonar.projectKey=Edis-git_FHB-TeamBeta-Assignment-Backend
+            -Dsonar.sources=.
+            
+      env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
   docker_build:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
