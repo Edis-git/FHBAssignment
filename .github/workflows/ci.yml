@@ -28,8 +28,9 @@ jobs:
       run: npm test
 
     - name: Run ESLint
+      if: github.event_name == 'pull_request'
       run: npm run lint
-      
+
   docker_build:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
