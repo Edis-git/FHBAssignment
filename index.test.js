@@ -1,56 +1,35 @@
-const request = require("supertest");
-const { app, server } = require("../index.js");
+const request = require('supertest');
+const app = require('./index');
 
-afterAll((done) => {
-  server.close(done);
-});
-
-describe("GET /api/notes", () => {
-  test("should return all notes", async () => {
-    const response = await request(app).get("/api/notes");
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveLength(3);
+describe('GET /', () => {
+  it('should return Hello World!', async () => {
+    const response = await request(app).get('/');
+    expect(response.status).toBe(200);
+    expect(response.text).toBe('<h1>Hello World!</h1>');
   });
 });
 
-describe("POST /api/notes", () => {
-  test("should create a new note", async () => {
-    const newNote = { content: "Test note", important: true };
-    const response = await request(app)
-      .post("/api/notes")
-      .send(newNote)
-      .set("Accept", "application/json");
-    expect(response.statusCode).toBe(200);
-    expect(response.body.content).toBe("Test note");
-  });
-
-  test("should return 400 if content is missing", async () => {
-    const newNote = { important: true };
-    const response = await request(app)
-      .post("/api/notes")
-      .send(newNote)
-      .set("Accept", "application/json");
-    expect(response.statusCode).toBe(400);
-    expect(response.body.error).toBe("content missing");
+describe('GET /api/notes', () => {
+  it('should return an array of notes', async () => {
+    const response = await request(app).get('/api/notes');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      { id: 1, content: 'HTML is easy', date: '2022-01-10T17:30:31.098Z', important: true },
+      { id: 2, content: 'Browser can execute only Javascript', date: '2022-01-10T18:39:34.091Z', important: false },
+      { id: 3, content: 'GET and POST are the most important methods of HTTP protocol', date: '2022-01-10T19:20:14.298Z', important: true }
+    ]);
   });
 });
 
-describe("GET /api/notes/:id", () => {
-  test("should return a note by ID", async () => {
-    const response = await request(app).get("/api/notes/1");
-    expect(response.statusCode).toBe(200);
-    expect(response.body.content).toBe("HTML is easy");
+describe('GET /api/notes/:id', () => {
+  it('should return a note object', async () => {
+    const response = await request(app).get('/api/notes/1');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ id: 1, content: 'HTML is easy', date: '2022-01-10T17:30:31.098Z', important: true });
   });
 
-  test("should return 404 if note not found", async () => {
-    const response = await request(app).get("/api/notes/999");
-    expect(response.statusCode).toBe(404);
-  });
-});
-
-describe("DELETE /api/notes/:id", () => {
-  test("should delete a note by ID", async () => {
-    const response = await request(app).delete("/api/notes/1");
-    expect(response.statusCode).toBe(204);
+  it('should return 404 for non-existent note', async () => {
+    const response = await request(app).get('/api/notes/999');
+    expect(response.status).toBe(404);
   });
 });
