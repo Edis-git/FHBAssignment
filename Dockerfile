@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3001
 
 # Define the command to run the application
-CMD ["node", "index.js"]
+CMD ["node", "server.js"]
