@@ -32,6 +32,7 @@ jobs:
       run: npm run lint
 
     - name: SonarCloud Scan
+      if: github.event_name == 'pull_request'
       uses: SonarSource/sonarcloud-github-action@master
       with:
           args: >
